@@ -23,7 +23,7 @@ const VOICE_CHANNEL_ID = process.env.VOICE_CHANNEL_ID;
 
 let connection;
 
-// 🔥 JOIN VC FUNCTION
+// 🔥 JOIN VC
 async function connectToVC() {
   try {
     const guild = client.guilds.cache.get(GUILD_ID);
@@ -37,10 +37,10 @@ async function connectToVC() {
       selfDeaf: true
     });
 
-    console.log("✅ Bot masuk voice channel");
+    console.log("✅ Bot masuk voice");
 
     connection.on(VoiceConnectionStatus.Disconnected, async () => {
-      console.log("⚠️ Terputus, mencoba reconnect...");
+      console.log("⚠️ Disconnect, reconnecting...");
       setTimeout(connectToVC, 3000);
     });
 
@@ -56,9 +56,10 @@ client.on("ready", () => {
   connectToVC();
 });
 
-// 🎮 COMMAND HANDLER
+// 🎮 COMMAND
 client.on("messageCreate", async (msg) => {
   if (msg.author.bot) return;
+
   if (!msg.content.toLowerCase().startsWith(PREFIX)) return;
 
   const withoutPrefix = msg.content.slice(PREFIX.length).trim();
@@ -67,14 +68,14 @@ client.on("messageCreate", async (msg) => {
 
   if (cmd === "join") {
     connectToVC();
-    msg.reply("✅ Bot masuk VC!");
+    msg.reply("✅ Masuk VC!");
   }
 
   if (cmd === "leave") {
     const conn = getVoiceConnection(GUILD_ID);
     if (conn) {
       conn.destroy();
-      msg.reply("👋 Bot keluar VC!");
+      msg.reply("👋 Keluar VC!");
     } else {
       msg.reply("❌ Bot tidak ada di VC");
     }
