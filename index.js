@@ -33,8 +33,8 @@ async function connectToVC() {
       channelId: VOICE_CHANNEL_ID,
       guildId: GUILD_ID,
       adapterCreator: guild.voiceAdapterCreator,
-      selfMute: true,
-      selfDeaf: true
+      selfMute: false,
+      selfDeaf: false
     });
 
     console.log("✅ Bot masuk voice");
