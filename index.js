@@ -173,7 +173,7 @@ client.on("interactionCreate", async (interaction) => {
     const member = interaction.member;
     const roleGent = interaction.guild.roles.cache.get(ROLE_GENTLEMAN);
 
-    if (interaction.values[0] === "gentleman") {
+    if (interaction.values[0] === "Boy's") {
 
       if (member.roles.cache.has(ROLE_GENTLEMAN)) {
         return interaction.reply({
@@ -192,7 +192,7 @@ client.on("interactionCreate", async (interaction) => {
         .setFooter({ text: "BETLEHEM • Role System" })
         .setTimestamp();
 
-      console.log(`🚹 ${interaction.user.tag} pilih Gentleman`);
+      console.log(`🚹 ${interaction.user.tag} pilih Boy's`);
 
       return interaction.reply({
         embeds: [embed],
