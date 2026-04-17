@@ -94,10 +94,10 @@ async function sendOrUpdatePanel() {
     .setDescription(
 `Silahkan pilih roles sesuai dengan gender kamu. Untuk role Ladies silahkan contact ADMIN untuk melakukan verifikasi.
 
-🚹┃ **Gentleman**
+🚹┃ **Boy's**
 Langsung pilih melalui dropdown.
 
-🌸┃ **Ladies**
+🌸┃ **Girl's**
 Harus melalui verifikasi (Join Voice).`
     )
     .setImage("https://media.discordapp.net/attachments/1487590787284734143/1494745021381873835/Black_and_Silver_Star_Dust_Love_Facebook_Cover_1.png");
@@ -107,8 +107,8 @@ Harus melalui verifikasi (Join Voice).`
     .setPlaceholder("Click menu ini untuk memilih roles!")
     .addOptions([
       {
-        label: "Gentleman",
-        value: "gentleman",
+        label: "Boy's",
+        value: "Boy's",
         emoji: "🚹"
       }
     ]);
@@ -187,7 +187,7 @@ client.on("interactionCreate", async (interaction) => {
       const embed = new EmbedBuilder()
         .setColor(0xff69b4)
         .setTitle("Role Updated")
-        .setDescription(`🚹 Kamu sekarang memiliki role:\n<@&${ROLE_GENTLEMAN}>`)
+        .setDescription(`✅Added role:\n<@&${ROLE_GENTLEMAN}>`)
         .setThumbnail(interaction.user.displayAvatarURL({ dynamic: true }))
         .setFooter({ text: "BETLEHEM • Role System" })
         .setTimestamp();
