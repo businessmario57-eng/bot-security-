@@ -81,7 +81,7 @@ async function sendOrUpdatePanel() {
   }
 
   const embed = new EmbedBuilder()
-    .setColor(0x2b2d31)
+    .setColor(0xff69b4)
     .setTitle("Gender Catalog")
     .setDescription(
 `Silahkan pilih roles sesuai dengan gender kamu. Untuk role Ladies silahkan contact ADMIN untuk melakukan verifikasi.
@@ -101,7 +101,7 @@ Harus melalui verifikasi (Join Voice).`
       {
         label: "Gentleman",
         value: "gentleman",
-        emoji: "👔"
+        emoji: "🚹"
       }
     ]);
 
