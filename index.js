@@ -13,7 +13,8 @@ const {
 const {
   joinVoiceChannel,
   getVoiceConnection,
-  VoiceConnectionStatus
+  VoiceConnectionStatus,
+  entersState
 } = require("@discordjs/voice");
 
 const client = new Client({
@@ -58,8 +59,15 @@ async function connectToVC() {
     console.log("✅ Bot masuk voice");
 
     connection.on(VoiceConnectionStatus.Disconnected, async () => {
-      console.log("⚠️ Disconnect, reconnecting...");
-      setTimeout(connectToVC, 3000);
+      try {
+        await Promise.race([
+          entersState(connection, VoiceConnectionStatus.Signalling, 5000),
+          entersState(connection, VoiceConnectionStatus.Connecting, 5000),
+        ]);
+      } catch {
+        console.log("🔄 Reconnecting VC...");
+        connectToVC();
+      }
     });
 
   } catch (err) {
@@ -92,7 +100,7 @@ Langsung pilih melalui dropdown.
 🌸┃ **Ladies**
 Harus melalui verifikasi (Join Voice).`
     )
-    .setImage("https://media.discordapp.net/attachments/1487590787284734143/1494745021381873835/Black_and_Silver_Star_Dust_Love_Facebook_Cover_1.png?ex=69e3b948&is=69e267c8&hm=410e7f9f077d1bfbd4ddbbf65be350db6dcdfea4ad2bfec0839b5fdbce5d14c2&=&format=webp&quality=lossless"); // ganti kalau mau
+    .setImage("https://media.discordapp.net/attachments/1487590787284734143/1494745021381873835/Black_and_Silver_Star_Dust_Love_Facebook_Cover_1.png");
 
   const menu = new StringSelectMenuBuilder()
     .setCustomId("gender_select")
@@ -107,7 +115,6 @@ Harus melalui verifikasi (Join Voice).`
 
   const row = new ActionRowBuilder().addComponents(menu);
 
-  // cek panel lama
   if (data.messageId) {
     try {
       const oldMsg = await channel.messages.fetch(data.messageId);
@@ -149,10 +156,11 @@ client.on("ready", async () => {
 // 🧹 AUTO CLEAN CHANNEL
 // =======================
 client.on("messageCreate", async (msg) => {
-  if (msg.channel.id !== PANEL_CHANNEL_ID) return;
-  if (msg.author.bot) return;
-
-  await msg.delete().catch(() => {});
+  if (msg.channel.id === PANEL_CHANNEL_ID && !msg.author.bot) {
+    if (msg.deletable) {
+      await msg.delete().catch(() => {});
+    }
+  }
 });
 
 // =======================
@@ -166,12 +174,28 @@ client.on("interactionCreate", async (interaction) => {
     const roleGent = interaction.guild.roles.cache.get(ROLE_GENTLEMAN);
 
     if (interaction.values[0] === "gentleman") {
+
+      if (member.roles.cache.has(ROLE_GENTLEMAN)) {
+        return interaction.reply({
+          content: "⚠️ Kamu sudah punya role ini",
+          ephemeral: true
+        });
+      }
+
       await member.roles.add(roleGent);
 
-      console.log(`👔 ${interaction.user.tag} pilih Gentleman`);
+      const embed = new EmbedBuilder()
+        .setColor(0xff69b4)
+        .setTitle("Role Updated")
+        .setDescription(`🚹 Kamu sekarang memiliki role:\n<@&${ROLE_GENTLEMAN}>`)
+        .setThumbnail(interaction.user.displayAvatarURL({ dynamic: true }))
+        .setFooter({ text: "BETLEHEM • Role System" })
+        .setTimestamp();
+
+      console.log(`🚹 ${interaction.user.tag} pilih Gentleman`);
 
       return interaction.reply({
-        content: "👔 Kamu sekarang **Gentleman**",
+        embeds: [embed],
         ephemeral: true
       });
     }
