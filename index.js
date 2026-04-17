@@ -33,9 +33,8 @@ const PREFIX = "b";
 const GUILD_ID = process.env.GUILD_ID;
 const VOICE_CHANNEL_ID = process.env.VOICE_CHANNEL_ID;
 
-const PANEL_CHANNEL_ID = "1488135944371572866";
+const PANEL_CHANNEL_ID = "1494735880760328444";
 const ROLE_GENTLEMAN = "1488390481908863067";
-const ROLE_LADIES = "1488390217940336701";
 const PANEL_MESSAGE_FILE = "./panel.json";
 
 let connection;
@@ -85,15 +84,15 @@ async function sendOrUpdatePanel() {
     .setColor(0x2b2d31)
     .setTitle("Gender Catalog")
     .setDescription(
-`Silahkan pilih roles sesuai dengan gender kamu.
+`Silahkan pilih roles sesuai dengan gender kamu. Untuk role Ladies silahkan contact ADMIN untuk melakukan verifikasi.
 
-💜 **Female Verification**
-Hubungi Guardian untuk akses.
+🚹┃ **Gentleman**
+Langsung pilih melalui dropdown.
 
-👔 Gentleman
-🌸 Ladies (VC & Cam)`
+🌸┃ **Ladies**
+Harus melalui verifikasi (Join Voice).`
     )
-    .setImage("https://i.imgur.com/yourImage.png");
+    .setImage("https://media.discordapp.net/attachments/1487590787284734143/1494745021381873835/Black_and_Silver_Star_Dust_Love_Facebook_Cover_1.png?ex=69e3b948&is=69e267c8&hm=410e7f9f077d1bfbd4ddbbf65be350db6dcdfea4ad2bfec0839b5fdbce5d14c2&=&format=webp&quality=lossless"); // ganti kalau mau
 
   const menu = new StringSelectMenuBuilder()
     .setCustomId("gender_select")
@@ -103,17 +102,12 @@ Hubungi Guardian untuk akses.
         label: "Gentleman",
         value: "gentleman",
         emoji: "👔"
-      },
-      {
-        label: "Ladies",
-        value: "ladies",
-        emoji: "🌸"
       }
     ]);
 
   const row = new ActionRowBuilder().addComponents(menu);
 
-  // 🔍 cek message lama
+  // cek panel lama
   if (data.messageId) {
     try {
       const oldMsg = await channel.messages.fetch(data.messageId);
@@ -123,14 +117,13 @@ Hubungi Guardian untuk akses.
         components: [row]
       });
 
-      console.log("♻️ Panel di-update (bukan kirim baru)");
+      console.log("♻️ Panel di-update");
       return;
     } catch {
-      console.log("⚠️ Panel lama hilang, kirim ulang");
+      console.log("⚠️ Panel hilang, kirim ulang");
     }
   }
 
-  // 🚀 kirim baru
   const msg = await channel.send({
     embeds: [embed],
     components: [row]
@@ -140,7 +133,7 @@ Hubungi Guardian untuk akses.
     messageId: msg.id
   }));
 
-  console.log("✅ Panel baru dikirim");
+  console.log("✅ Panel dikirim");
 }
 
 // =======================
@@ -159,42 +152,26 @@ client.on("messageCreate", async (msg) => {
   if (msg.channel.id !== PANEL_CHANNEL_ID) return;
   if (msg.author.bot) return;
 
-  // hapus semua chat user di channel panel
   await msg.delete().catch(() => {});
 });
 
 // =======================
-// 🎯 SELECT MENU ROLE
+// 🎯 SELECT MENU
 // =======================
 client.on("interactionCreate", async (interaction) => {
   if (!interaction.isStringSelectMenu()) return;
 
   if (interaction.customId === "gender_select") {
     const member = interaction.member;
-
     const roleGent = interaction.guild.roles.cache.get(ROLE_GENTLEMAN);
-    const roleLady = interaction.guild.roles.cache.get(ROLE_LADIES);
 
     if (interaction.values[0] === "gentleman") {
-      await member.roles.remove(roleLady).catch(() => {});
       await member.roles.add(roleGent);
 
       console.log(`👔 ${interaction.user.tag} pilih Gentleman`);
 
       return interaction.reply({
         content: "👔 Kamu sekarang **Gentleman**",
-        ephemeral: true
-      });
-    }
-
-    if (interaction.values[0] === "ladies") {
-      await member.roles.remove(roleGent).catch(() => {});
-      await member.roles.add(roleLady);
-
-      console.log(`🌸 ${interaction.user.tag} pilih Ladies`);
-
-      return interaction.reply({
-        content: "🌸 Kamu sekarang **Ladies**",
         ephemeral: true
       });
     }
